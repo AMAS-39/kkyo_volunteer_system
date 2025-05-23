@@ -1,63 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Add Volunteer - KKYO Admin Panel</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+  <meta charset="UTF-8">
+  <title>Bulk Add Points</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-6">
+<body class="bg-gradient-to-br from-blue-100 to-blue-300 min-h-screen">
 
-    <div class="w-full max-w-xl bg-gray-800 p-8 rounded-lg shadow-lg">
-        <h2 class="text-2xl font-bold text-center mb-6">➕ Add Volunteer</h2>
-
-        @if ($errors->any())
-            <div class="bg-red-600 text-white p-3 rounded mb-4">
-                <ul class="list-disc list-inside text-sm">
-                    @foreach ($errors->all() as $error)
-                        <li>⚠️ {{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <form method="POST" action="{{ route('volunteers.store') }}" class="space-y-5">
-            @csrf
-
-            <div>
-                <label for="name" class="block text-sm font-semibold mb-1">Name</label>
-                <input type="text" name="name" id="name" required class="w-full px-4 py-2 rounded bg-gray-700 text-white focus:ring-2 focus:ring-indigo-500">
-            </div>
-
-            <div>
-                <label for="phone" class="block text-sm font-semibold mb-1">phone</label>
-                <input type="number" name="phone" id="phone" required class="w-full px-4 py-2 rounded bg-gray-700 text-white focus:ring-2 focus:ring-indigo-500">
-            </div>
-
-            @auth
-                @if(auth()->user()->role === 1)
-                    <div>
-                        <label for="department_code" class="block text-sm font-semibold mb-1">Department</label>
-                        <select name="department_code" id="department_code" required class="w-full px-4 py-2 rounded bg-gray-700 text-white focus:ring-2 focus:ring-indigo-500">
-                            <option value="" disabled selected>Select a Department</option>
-                            @foreach(App\Models\Department::all() as $dept)
-                                <option value="{{ $dept->code }}">{{ $dept->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                @endif
-            @endauth
-
-            <div class="text-center pt-2">
-                <button type="submit" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded font-semibold">
-                    ✅ Submit Volunteer
-                </button>
-            </div>
-
-            <div class="text-center pt-4">
-                <a href="{{ route('volunteers.index') }}" class="text-sm text-indigo-300 hover:underline">🔙 Back to Volunteers</a>
-            </div>
-        </form>
+  {{-- 🔹 HEADER --}}
+  <header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold text-blue-800">KKYO Admin Panel</h1>
+      <div class="text-sm text-gray-600">
+        Logged in as: <span class="font-semibold">{{ auth()->user()->name }}</span>
+      </div>
     </div>
+  </header>
+
+  {{-- 🔹 FORM CARD --}}
+  <main class="flex justify-center py-12 px-4">
+    <div class="w-full max-w-xl bg-white border border-gray-200 shadow-xl rounded-2xl p-10">
+      <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">➕ Bulk Add Points</h2>
+      <p class="text-gray-500 text-sm text-center mb-6">
+        Select volunteers to give points to. As a {{ auth()->user()->role == 1 ? 'Chairwoman' : 'Department Head' }}, your access is limited.
+      </p>
+
+      @if(session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-5 text-sm">
+          {{ session('success') }}
+        </div>
+      @endif
+
+      <form action="{{ route('volunteers.bulk.points.store') }}" method="POST" class="space-y-5">
+        @csrf
+
+        <div>
+          <label for="user_codes" class="block text-base font-semibold text-gray-700 mb-1">🧑‍🤝‍🧑 Select Volunteers</label>
+          <select name="user_codes[]" id="user_codes" multiple required
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            @foreach($volunteers as $v)
+              <option value="{{ $v->user_code }}">{{ $v->name }} ({{ $v->user_code }}) - Dept {{ $v->department_code }}</option>
+            @endforeach
+          </select>
+          <p class="text-xs text-gray-400 mt-1">Hold Ctrl (Cmd on Mac) to select multiple.</p>
+        </div>
+
+        <div>
+          <label for="points" class="block text-base font-semibold text-gray-700 mb-1">⭐ Points to Add</label>
+          <input type="number" id="points" name="points" required
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="e.g., 5">
+        </div>
+
+        <div>
+          <label for="reason" class="block text-base font-semibold text-gray-700 mb-1">✍️ Reason</label>
+          <input type="text" id="reason" name="reason" required
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="e.g., Workshop Participation">
+        </div>
+
+        <div class="text-center pt-2">
+          <button type="submit"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">
+            ✅ Add Points
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
 
 </body>
 </html>

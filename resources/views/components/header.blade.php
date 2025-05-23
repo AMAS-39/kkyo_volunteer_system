@@ -3,12 +3,19 @@
         <h1 class="text-xl font-bold">KKYO Admin Panel</h1>
 
         <nav class="space-x-4">
-            <a href="{{ route('dashboard') }}" class="hover:text-yellow-300 {{ request()->routeIs('dashboard') ? 'font-bold text-yellow-300' : '' }}">
+            <a href="{{ route('dashboard') }}"
+               class="hover:text-yellow-300 {{ request()->routeIs('dashboard') ? 'font-bold text-yellow-300' : '' }}">
                 🏠 Dashboard
             </a>
 
-            <a href="{{ route('volunteers.index') }}" class="hover:text-yellow-300 {{ request()->routeIs('volunteers.*') ? 'font-bold text-yellow-300' : '' }}">
+            <a href="{{ route('volunteers.index') }}"
+               class="hover:text-yellow-300 {{ request()->routeIs('volunteers.*') && !request()->routeIs('volunteers.bulk.points.form') ? 'font-bold text-yellow-300' : '' }}">
                 👥 Volunteers
+            </a>
+
+            <a href="{{ route('volunteers.bulk.points.form') }}"
+               class="hover:text-yellow-300 {{ request()->routeIs('volunteers.bulk.points.form') ? 'font-bold text-yellow-300' : '' }}">
+                ➕ Bulk Add Points
             </a>
 
             <form action="{{ route('logout') }}" method="POST" class="inline">

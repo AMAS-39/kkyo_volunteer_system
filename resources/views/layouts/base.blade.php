@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>KKYO Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex flex-col">

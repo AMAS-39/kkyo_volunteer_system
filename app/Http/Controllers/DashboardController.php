@@ -26,6 +26,7 @@ class DashboardController extends Controller
         }
     }
 
+
     public function chairwoman()
 {
     return view('dashboard.chairwoman');
