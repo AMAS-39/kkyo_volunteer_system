@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\VolunteerController;
-use App\Http\Controllers\AuthController;
 use App\Models\Volunteer;
 use App\Models\PointHistory;
 use App\Imports\VolunteersImport;
@@ -15,14 +14,13 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-
+// Logout route (authenticated users)
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-
 
 // Guest routes (only for unauthenticated users)
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
     // Add register or password reset routes here if needed
 });
 
@@ -33,20 +31,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/chairwoman', [DashboardController::class, 'chairwoman'])->name('dashboard.chairwoman');
     Route::get('/dashboard/head', [DashboardController::class, 'head'])->name('dashboard.head');
 
-    // Volunteers routes with prefix
-    Route::prefix('volunteers')->group(function () {
-        // Bulk points routes
-        Route::get('/bulk-points', [VolunteerController::class, 'bulkAddPointsForm'])->name('volunteers.bulk.points.form');
-        Route::post('/bulk-points', [VolunteerController::class, 'storeBulkPoints'])->name('volunteers.bulk.points.store');
+    // Volunteers routes
+    Route::get('volunteers/bulk-points', [VolunteerController::class, 'bulkAddPointsForm'])->name('volunteers.bulk.points.form');
+    Route::post('volunteers/bulk-points', [VolunteerController::class, 'storeBulkPoints'])->name('volunteers.bulk.points.store');
 
-        // Resource routes except edit, update, show
-        Route::resource('/', VolunteerController::class)->parameters(['' => 'volunteer'])->except(['edit', 'update', 'show']);
+    Route::resource('volunteers', VolunteerController::class)->except(['edit', 'update', 'show']);
 
-        // Additional volunteer-specific routes
-        Route::get('{id}/points', [VolunteerController::class, 'addPointsForm'])->name('volunteers.points');
-        Route::post('{id}/points', [VolunteerController::class, 'storePoints'])->name('volunteers.points.store');
-        Route::get('{id}/history', [VolunteerController::class, 'viewHistory'])->name('volunteers.history');
-    });
+    Route::get('volunteers/{id}/points', [VolunteerController::class, 'addPointsForm'])->name('volunteers.points');
+    Route::post('volunteers/{id}/points', [VolunteerController::class, 'storePoints'])->name('volunteers.points.store');
+    Route::get('volunteers/{id}/history', [VolunteerController::class, 'viewHistory'])->name('volunteers.history');
 
     // Excel import routes
     Route::get('/import-volunteers', function () {
