@@ -9,7 +9,7 @@
 <body class="bg-gray-900 flex items-center justify-center min-h-screen text-white">
   <div class="w-full max-w-md p-10 bg-gray-800 rounded-xl shadow-xl space-y-6">
     <div class="text-center">
-      <h2 class="text-3xl font-bold mb-1">🔐  Admin Login</h2>
+      <h2 class="text-3xl font-bold mb-1">🔐 KKYO Admin Login</h2>
       <p class="text-gray-400 text-sm">Welcome back! Please enter your credentials.</p>
     </div>
 
@@ -29,6 +29,7 @@
           name="email"
           required
           autofocus
+          autocomplete="username"
           class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
       </div>

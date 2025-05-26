@@ -9,10 +9,15 @@ use App\Models\PointHistory;
 use App\Imports\VolunteersImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
 
 // Guest routes (only for unauthenticated users)
 Route::middleware('guest')->group(function () {
